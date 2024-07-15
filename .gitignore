@@ -1,0 +1,20 @@
+# Composer dependencies
+/vendor/*
+
+# Composer package lock file
+/composer.lock
+
+# Docker related files
+/.env
+/docker-compose.override.yml
+/docker-compose.*
+
+# Log files
+/logs/
+/*.log
+/.idea/php.xml
+/.idea/modules.xml
+/.idea/phpunit.xml
+/.idea/vcs.xml
+/.idea/.gitignore
+/.idea/FeedDataProcessor.iml
