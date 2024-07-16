@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: feed_data_processor_app
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+    environment:
+      DB_HOST: mysql
+      DB_NAME: feed_data
+      DB_USER: root
+      DB_PASSWORD: secret
+    networks:
+      - app-network
+    volumes:
+      - .:/var/www/html
+
+  mysql:
+    image: mysql:5.7
+    container_name: feed_data_processor_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: feed_data
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
+    driver: local
