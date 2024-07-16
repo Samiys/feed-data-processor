@@ -29,8 +29,6 @@ This project is a data processing application designed to parse XML data from a 
    cd feed-data-processor
    ```
 
-[Download the project as a ZIP file](https://github.com/Samiys/feed-data-processor/archive/refs/heads/master.zip)
-
 2. **Install dependencies:**
 
    ```bash
