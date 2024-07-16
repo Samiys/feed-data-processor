@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Exceptions\DatabaseException;
 use PDO;
 use PDOException;
+use SimpleXMLElement;
 
 class ItemRepository
 {
@@ -15,7 +16,7 @@ class ItemRepository
         $this->db = $db;
     }
 
-    public function saveItem($item): bool
+    public function saveItem(SimpleXMLElement $item): bool
     {
         $sql = "INSERT INTO items (entity_id, category_name, sku, name, description, short_desc, price, link, image, brand, rating, caffeine_type, count, flavored, seasonal, in_stock, facebook, is_kcup)
                 VALUES (:entity_id, :category_name, :sku, :name, :description, :short_desc, :price, :link, :image, :brand, :rating, :caffeine_type, :count, :flavored, :seasonal, :in_stock, :facebook, :is_kcup)";
@@ -28,7 +29,7 @@ class ItemRepository
         }
     }
 
-    private function prepareItemForInsert($item): array
+    private function prepareItemForInsert(SimpleXMLElement $item): array
     {
         return [
             'entity_id' => (int)$item->entity_id,

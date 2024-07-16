@@ -2,9 +2,10 @@
 namespace App\Parser;
 
 use App\Logger\ErrorLogger;
+use SimpleXMLElement;
 
 class XMLParser {
-    public static function parse($xmlFile) {
+    public static function parse(string $xmlFile): ?SimpleXMLElement {
         if (!file_exists($xmlFile)) {
             ErrorLogger::logError("XML file not found: $xmlFile");
             return null;

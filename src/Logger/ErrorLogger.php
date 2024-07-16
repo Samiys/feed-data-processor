@@ -16,7 +16,7 @@ class ErrorLogger {
         return self::$logger;
     }
 
-    public static function logError($message, $context = []): void
+    public static function logError(string $message, array $context = []): void
     {
         self::getLogger()->error($message, $context);
     }

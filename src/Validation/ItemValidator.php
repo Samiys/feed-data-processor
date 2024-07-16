@@ -26,8 +26,7 @@ class ItemValidator implements ValidatorInterface {
     /**
      * @throws InvalidEntityException
      */
-    private static function validateEntityId($entityId): void {
-        $entityId = (string) $entityId;
+    private static function validateEntityId(string $entityId): void {
         if (empty($entityId) || !is_numeric($entityId)) {
             ErrorLogger::logError("Validation failed for entity_id: " . $entityId . ". Invalid entity_id.");
             throw new InvalidEntityException("Invalid entity_id: $entityId");
@@ -37,7 +36,7 @@ class ItemValidator implements ValidatorInterface {
     /**
      * @throws MissingFieldException
      */
-    private static function validateRequiredField($value, $fieldName, $entityId): void {
+    private static function validateRequiredField($value, string $fieldName, string $entityId): void {
         if (empty($value)) {
             ErrorLogger::logError("Validation failed for entity_id: " . $entityId . ". Missing $fieldName.");
             throw new MissingFieldException("Missing required field: $fieldName for entity_id: $entityId");
