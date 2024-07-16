@@ -24,12 +24,10 @@ This project is a data processing application designed to parse XML data from a 
 
 1. **Clone the repository:**
 
-   ```bash
-   git clone <repository-url>
+  ```bash
+   git clone https://github.com/Samiys/feed-data-processor
    cd feed-data-processor
    ```
-
-   [Download the project as a ZIP file](https://github.com/yourusername/feed-data-processor/archive/refs/heads/main.zip)
 
 2. **Install dependencies:**
 
