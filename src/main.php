@@ -9,7 +9,8 @@ use App\DataHandler\DataInserter;
 use App\Logger\ErrorLogger;
 
 try {
-    $database = DatabaseFactory::create();
+    $databaseType = $argv[1];
+    $database = DatabaseFactory::create($databaseType);
     $pdo = $database->getConnection();
 
     $xmlFile = 'feed.xml';

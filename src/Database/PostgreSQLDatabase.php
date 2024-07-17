@@ -2,11 +2,10 @@
 namespace App\Database;
 
 use App\Exceptions\DatabaseConnectionException;
-use App\Logger\ErrorLogger;
 use PDO;
 use PDOException;
 
-class MySQLDatabase implements DatabaseInterface {
+class PostgreSQLDatabase implements DatabaseInterface {
     private $connection;
 
     /**
@@ -16,18 +15,14 @@ class MySQLDatabase implements DatabaseInterface {
         $this->initializeConnection();
     }
 
-    public function getConnection(): PDO
-    {
+    public function getConnection(): PDO {
         return $this->connection;
     }
 
-    /**
-     * @throws DatabaseConnectionException
-     */
     private function initializeConnection(): void {
         try {
             $config = require __DIR__ . '/../../config/config.php';
-            $dbConfig = $config['db']['connections']['mysql'];
+            $dbConfig = $config['db']['connections']['pgsql'];
             $host = $dbConfig['host'];
             $dbname = $dbConfig['dbname'];
             $user = $dbConfig['user'];
@@ -35,7 +30,8 @@ class MySQLDatabase implements DatabaseInterface {
             $port = $dbConfig['port'];
             $charset = $dbConfig['charset'];
 
-            $dsn = "mysql:host=$host;port=$port;dbname=$dbname;charset=$charset";
+            $dsn = "pgsql:host=$host;port=$port;dbname=$dbname;options='--client_encoding=$charset'";
+
             $this->connection = new PDO($dsn, $user, $password);
             $this->initializeDatabase();
         } catch (PDOException $e) {
@@ -43,14 +39,10 @@ class MySQLDatabase implements DatabaseInterface {
         }
     }
 
-    /**
-     * @throws DatabaseConnectionException
-     */
-    public function initializeDatabase(): void
-    {
+    public function initializeDatabase(): void {
         try {
             $this->connection->exec("CREATE TABLE IF NOT EXISTS items (
-                entity_id INT PRIMARY KEY,
+                entity_id SERIAL PRIMARY KEY,
                 category_name VARCHAR(255),
                 sku VARCHAR(255),
                 name VARCHAR(255),
@@ -70,8 +62,7 @@ class MySQLDatabase implements DatabaseInterface {
                 is_kcup INT
             )");
         } catch (PDOException $e) {
-            ErrorLogger::logError("Failed to initialize database: " . $e->getMessage());
-            throw new DatabaseConnectionException("Failed to initialize database", 0, $e);
+            throw new DatabaseConnectionException("Failed to initialize database: " . $e->getMessage());
         }
     }
 }

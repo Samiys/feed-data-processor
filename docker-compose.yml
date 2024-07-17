@@ -10,10 +10,10 @@ services:
     ports:
       - "9000:9000"
     environment:
-      DB_HOST: mysql
-      DB_NAME: feed_data
-      DB_USER: root
-      DB_PASSWORD: secret
+      DB_HOST: ${MYSQL_DB_HOST}
+      DB_NAME: ${MYSQL_DB_NAME}
+      DB_USER: ${MYSQL_DB_USER}
+      DB_PASSWORD: ${MYSQL_DB_PASSWORD}
     networks:
       - app-network
     volumes:
@@ -24,12 +24,25 @@ services:
     container_name: feed_data_processor_mysql
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: secret
-      MYSQL_DATABASE: feed_data
+      MYSQL_ROOT_PASSWORD: ${MYSQL_DB_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DB_NAME}
     ports:
-      - "5000:3306"
+      - "3306:3306"
     volumes:
       - mysql-data:/var/lib/mysql
+    networks:
+      - app-network
+
+  postgres:
+    image: postgres:latest
+    container_name: feed_data_processor_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${PGSQL_DB_NAME}
+      POSTGRES_USER: ${PGSQL_DB_USER}
+      POSTGRES_PASSWORD: ${PGSQL_DB_PASSWORD}
+    ports:
+      - "5432:5432"
     networks:
       - app-network
 

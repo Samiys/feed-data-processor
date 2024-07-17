@@ -13,10 +13,11 @@ RUN apt-get update \
         zip \
         unzip \
         git \
+        libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions
-RUN docker-php-ext-install pdo_mysql xml zip
+RUN docker-php-ext-install pdo_pgsql pdo_mysql xml zip
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer

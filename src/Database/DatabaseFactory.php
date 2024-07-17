@@ -8,10 +8,14 @@ class DatabaseFactory {
      * @throws DatabaseConnectionException
      */
     public static function create(string $type = 'mysql'): DatabaseInterface {
-        if ($type === 'mysql') {
-            return new MySQLDatabase();
+        switch ($type) {
+            case 'mysql':
+                return new MySQLDatabase();
+            case 'pgsql':
+                return new PostgreSQLDatabase();
+            default:
+                throw new DatabaseConnectionException("Unsupported database type: $type");
         }
-        throw new DatabaseConnectionException("Unsupported database type: $type");
     }
 }
 ?>
