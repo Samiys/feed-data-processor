@@ -24,10 +24,10 @@ This project is a data processing application designed to parse XML data from a 
 
 1. **Clone the repository:**
 
-  ```bash
-   git clone https://github.com/Samiys/feed-data-processor
-   cd feed-data-processor
-   ```
+     ```bash
+      git clone https://github.com/Samiys/feed-data-processor
+      cd feed-data-processor
+      ```
 
 2. **Install dependencies:**
 
@@ -53,9 +53,16 @@ This project is a data processing application designed to parse XML data from a 
 
 5. **Run the data processing script:**
 
-   ```bash
-   docker-compose run --rm app php src/main.php feed.xml
-   ```
+    For MySQL:
+
+      ```bash
+      docker-compose run --rm app php src/main.php mysql
+      ```
+     For PostgreSQL:
+
+      ```bash
+      docker-compose run --rm app php src/main.php pgsql
+      ```
 
 6. **Run PHPUnit tests:**
 
@@ -71,8 +78,15 @@ Set up a MySQL database and configure `.env` accordingly.
 
 Run the data processing script:
 
+For MySQL:
+
 ```bash
-php src/main.php feed.xml
+php src/main.php mysql
+```
+For PostgreSQL:
+
+```bash
+php src/main.php pgsql
 ```
 
 Run PHPUnit tests:
