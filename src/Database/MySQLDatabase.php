@@ -8,16 +8,17 @@ use PDOException;
 
 class MySQLDatabase implements DatabaseInterface {
     private $connection;
+    private $config;
 
     /**
      * @throws DatabaseConnectionException
      */
-    public function __construct() {
+    public function __construct(array $config) {
+        $this->config = $config;
         $this->initializeConnection();
     }
 
-    public function getConnection(): PDO
-    {
+    public function getConnection(): PDO {
         return $this->connection;
     }
 
@@ -26,17 +27,9 @@ class MySQLDatabase implements DatabaseInterface {
      */
     private function initializeConnection(): void {
         try {
-            $config = require __DIR__ . '/../../config/config.php';
-            $dbConfig = $config['db']['connections']['mysql'];
-            $host = $dbConfig['host'];
-            $dbname = $dbConfig['dbname'];
-            $user = $dbConfig['user'];
-            $password = $dbConfig['password'];
-            $port = $dbConfig['port'];
-            $charset = $dbConfig['charset'];
-
-            $dsn = "mysql:host=$host;port=$port;dbname=$dbname;charset=$charset";
-            $this->connection = new PDO($dsn, $user, $password);
+            $dbConfig = $this->config;
+            $dsn = "mysql:host={$dbConfig['host']};port={$dbConfig['port']};dbname={$dbConfig['dbname']};charset={$dbConfig['charset']}";
+            $this->connection = new PDO($dsn, $dbConfig['user'], $dbConfig['password']);
             $this->initializeDatabase();
         } catch (PDOException $e) {
             throw new DatabaseConnectionException("Database connection failed: " . $e->getMessage());

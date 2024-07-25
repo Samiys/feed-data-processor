@@ -7,11 +7,13 @@ use PDOException;
 
 class PostgreSQLDatabase implements DatabaseInterface {
     private $connection;
+    private $config;
 
     /**
      * @throws DatabaseConnectionException
      */
-    public function __construct() {
+    public function __construct(array $config) {
+        $this->config = $config;
         $this->initializeConnection();
     }
 
@@ -21,18 +23,9 @@ class PostgreSQLDatabase implements DatabaseInterface {
 
     private function initializeConnection(): void {
         try {
-            $config = require __DIR__ . '/../../config/config.php';
-            $dbConfig = $config['db']['connections']['pgsql'];
-            $host = $dbConfig['host'];
-            $dbname = $dbConfig['dbname'];
-            $user = $dbConfig['user'];
-            $password = $dbConfig['password'];
-            $port = $dbConfig['port'];
-            $charset = $dbConfig['charset'];
-
-            $dsn = "pgsql:host=$host;port=$port;dbname=$dbname;options='--client_encoding=$charset'";
-
-            $this->connection = new PDO($dsn, $user, $password);
+            $dbConfig = $this->config;
+            $dsn = "pgsql:host={$dbConfig['host']};port={$dbConfig['port']};dbname={$dbConfig['dbname']};options='--client_encoding={$dbConfig['charset']}'";
+            $this->connection = new PDO($dsn, $dbConfig['user'], $dbConfig['password']);
             $this->initializeDatabase();
         } catch (PDOException $e) {
             throw new DatabaseConnectionException("Database connection failed: " . $e->getMessage());
