@@ -11,13 +11,13 @@ class ItemValidator implements ValidatorInterface {
      * @throws InvalidEntityException
      * @throws MissingFieldException
      */
-    public static function validate($data): bool {
-        $entityId = (string) ($data->entity_id ?? '');
+    public static function validate(array $data): bool {
+        $entityId = $data['entity_id'] ?? '';
         self::validateEntityId($entityId);
 
         $requiredFields = ['sku', 'name', 'price'];
         foreach ($requiredFields as $field) {
-            self::validateRequiredField($data, $field, $entityId);
+            self::validateRequiredField($data[$field] ?? '', $field, $entityId);
         }
 
         return true;

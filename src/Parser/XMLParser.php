@@ -11,25 +11,28 @@ class XMLParser {
      * @param string $xmlFile The path to the XML file.
      * @return SimpleXMLElement|null The parsed XML or null on failure.
      */
-    public static function parse(string $xmlFile): ?SimpleXMLElement {
+    public static function parse(string $xmlFile, callable $callback): void {
         if (!file_exists($xmlFile)) {
             ErrorLogger::logError("XML file not found: $xmlFile");
-            return null;
+            return;
         }
 
-        $content = file_get_contents($xmlFile);
-        if (!$content) {
-            ErrorLogger::logError("Failed to read XML file: $xmlFile");
-            return null;
+        $reader = new XMLReader();
+        $reader->open($xmlFile);
+
+        // Loop through the XML file and process each <item> node
+        while ($reader->read()) {
+            if ($reader->nodeType == XMLReader::ELEMENT && $reader->name == 'item') {
+                try {
+                    $node = new SimpleXMLElement($reader->readOuterXML());
+                    $callback($node);
+                } catch (\Exception $e) {
+                    ErrorLogger::logError("Failed to parse XML node: " . $e->getMessage());
+                }
+            }
         }
 
-        $xml = simplexml_load_string($content);
-        if (!$xml) {
-            ErrorLogger::logError("Failed to load XML content: $xmlFile");
-            return null;
-        }
-
-        return $xml;
+        $reader->close();
     }
 }
 ?>

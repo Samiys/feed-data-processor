@@ -4,34 +4,31 @@ require_once 'vendor/autoload.php';
 
 use App\Database\DatabaseDTO;
 use App\Database\DatabaseFactory;
-use App\Parser\JSONParser;
+use App\DataHandler\DataInserter;
 use App\Parser\XMLStreamParser;
 use App\Repository\ItemRepository;
-use App\DataHandler\DataInserter;
 use App\Logger\ErrorLogger;
 
-
 try {
+    $file = 'feed.xml';
     $databaseType = $argv[1];
-    $config = new DatabaseDTO(require __DIR__ . '/../../config/config.php');
+    $configArray = require __DIR__ . '/../config/config.php';
+    $config = new DatabaseDTO($configArray);
+
     $databaseFactory = new DatabaseFactory($config);
     $database = $databaseFactory->create($databaseType);
     $pdo = $database->getConnection();
 
-    $file = 'feed.xml';
     $itemRepository = new ItemRepository($pdo);
-    $dataInserter = new DataInserter($itemRepository);
 
-    if (pathinfo($file, PATHINFO_EXTENSION) === 'xml') {
-        XMLStreamParser::parse($file, function ($item) use ($dataInserter) {
-            $dataInserter->insertData([$item]);
-        });
-    } elseif (pathinfo($file, PATHINFO_EXTENSION) === 'json') {
-        $data = JSONParser::parse($file);
-        if ($data) {
-            $dataInserter->insertData($data);
+    $dataInserter = new DataInserter($itemRepository);
+    XMLStreamParser::parse($file, function ($item) use ($dataInserter) {
+        try {
+            $dataInserter->insertData($item);
+        } catch (\Exception $e) {
+            ErrorLogger::logError("Error processing item: " . $e->getMessage());
         }
-    }
+    });
 
     echo "Data processing complete.\n";
 } catch (Exception $e) {
@@ -39,4 +36,3 @@ try {
     echo "An error occurred. Check the error log for details.\n";
 }
 ?>
-
