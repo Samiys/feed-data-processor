@@ -1,0 +1,42 @@
+[
+  {
+    "entity_id": 340,
+    "category_name": "Green Mountain Ground Coffee",
+    "sku": "20",
+    "name": "Green Mountain Coffee French Roast Ground Coffee 24 2.2oz Bag",
+    "description": "",
+    "short_desc": "Green Mountain Coffee French Roast Ground Coffee 24 2.2oz Bag steeps cup after cup of smoky-sweet, complex dark roast coffee from Green Mountain Ground Coffee.",
+    "price": 41.60,
+    "link": "http://www.coffeeforless.com/green-mountain-coffee-french-roast-ground-coffee-24-2-2oz-bag.html",
+    "image": "http://mcdn.coffeeforless.com/media/catalog/product/images/uploads/intro/frac_box.jpg",
+    "brand": "Green Mountain Coffee",
+    "rating": 0,
+    "caffeine_type": "Caffeinated",
+    "count": 24,
+    "flavored": "No",
+    "seasonal": "No",
+    "in_stock": "Yes",
+    "facebook": 1,
+    "is_kcup": 0
+  },
+  {
+    "entity_id": 342,
+    "category_name": "Nestle Hot Chocolate",
+    "sku": "25",
+    "name": "Nestle Hot Chocolate Mix",
+    "description": "",
+    "short_desc": "Nestle Hot Chocolate Mix, 50 Packets, perfect for a warm, comforting drink.",
+    "price": 9.99,
+    "link": "http://www.example.com/nestle-hot-chocolate-mix.html",
+    "image": "http://www.example.com/media/catalog/product/nestle_hot_chocolate.jpg",
+    "brand": "Nestle",
+    "rating": 4,
+    "caffeine_type": "Decaffeinated",
+    "count": 50,
+    "flavored": "No",
+    "seasonal": "No",
+    "in_stock": "Yes",
+    "facebook": 0,
+    "is_kcup": 0
+  }
+]
