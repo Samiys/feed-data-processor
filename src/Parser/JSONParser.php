@@ -6,7 +6,7 @@ use App\Logger\ErrorLogger;
 
 class JSONParser {
     /**
-     * Parses a JSON file and processes each item with the given callback.
+     * Parses a large JSON file and processes each item with the given callback.
      *
      * @param string $jsonFile The path to the JSON file.
      * @param callable $callback A callback function to process each item.
@@ -18,24 +18,54 @@ class JSONParser {
             return;
         }
 
-        $jsonData = file_get_contents($jsonFile);
-        if ($jsonData === false) {
-            ErrorLogger::logError("Failed to read JSON file: $jsonFile");
+        $handle = fopen($jsonFile, 'r');
+        if ($handle === false) {
+            ErrorLogger::logError("Failed to open JSON file: $jsonFile");
             return;
         }
 
-        $data = json_decode($jsonData, true);
-        if ($data === null) {
-            ErrorLogger::logError("Failed to parse JSON data");
-            return;
-        }
+        $buffer = '';
+        $inString = false;
 
-        foreach ($data as $item) {
-            try {
-                $callback($item);
-            } catch (\Exception $e) {
-                ErrorLogger::logError("Error processing item: " . $e->getMessage());
+        while (($char = fgetc($handle)) !== false) {
+            $buffer .= $char;
+
+            if ($char === '"') {
+                $inString = !$inString;
+            }
+
+            if (!$inString && ($char === '}' || $char === ']')) {
+                $data = json_decode($buffer, true);
+                if (json_last_error() === JSON_ERROR_NONE && is_array($data)) {
+                    foreach ($data as $item) {
+                        try {
+                            $callback($item);
+                        } catch (\Exception $e) {
+                            ErrorLogger::logError("Error processing item: " . $e->getMessage());
+                        }
+                    }
+                    $buffer = '';
+                } else {
+                    ErrorLogger::logError("JSON decode error: " . json_last_error_msg());
+                }
             }
         }
+
+        if (!empty($buffer)) {
+            $data = json_decode($buffer, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($data)) {
+                foreach ($data as $item) {
+                    try {
+                        $callback($item);
+                    } catch (\Exception $e) {
+                        ErrorLogger::logError("Error processing item: " . $e->getMessage());
+                    }
+                }
+            } else {
+                ErrorLogger::logError("Failed to parse remaining JSON data");
+            }
+        }
+
+        fclose($handle);
     }
 }
