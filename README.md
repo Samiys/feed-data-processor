@@ -56,12 +56,14 @@ This project is a data processing application designed to parse XML data from a 
     For MySQL:
 
       ```bash
-      docker-compose run --rm app php src/main.php mysql
+    docker-compose run --rm app php src/main.php feed.xml mysql
+   docker-compose run --rm app php src/main.php feed.json mysql
       ```
      For PostgreSQL:
 
       ```bash
-      docker-compose run --rm app php src/main.php pgsql
+    docker-compose run --rm app php src/main.php feed.xml pgsql
+   docker-compose run --rm app php src/main.php feed.json pgsql
       ```
 
 6. **Run PHPUnit tests:**
