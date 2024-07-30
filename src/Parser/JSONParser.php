@@ -6,47 +6,36 @@ use App\Logger\ErrorLogger;
 
 class JSONParser {
     /**
-     * Parses a JSON file and returns the data as an array.
+     * Parses a JSON file and processes each item with the given callback.
      *
      * @param string $jsonFile The path to the JSON file.
-     * @return array|null The parsed data or null on failure.
+     * @param callable $callback A callback function to process each item.
+     * @return void
      */
-    public static function parse(string $jsonFile): ?array {
+    public static function parse(string $jsonFile, callable $callback): void {
         if (!file_exists($jsonFile)) {
             ErrorLogger::logError("JSON file not found: $jsonFile");
-            return null;
+            return;
         }
 
-        $content = file_get_contents($jsonFile);
-        if ($content === false) {
+        $jsonData = file_get_contents($jsonFile);
+        if ($jsonData === false) {
             ErrorLogger::logError("Failed to read JSON file: $jsonFile");
-            return null;
+            return;
         }
 
-        $data = json_decode($content, true);
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            ErrorLogger::logError("Failed to decode JSON content: " . json_last_error_msg());
-            return null;
+        $data = json_decode($jsonData, true);
+        if ($data === null) {
+            ErrorLogger::logError("Failed to parse JSON data");
+            return;
         }
 
-        if (!is_array($data)) {
-            ErrorLogger::logError("JSON content is not a valid array.");
-            return null;
-        }
-
-        foreach ($data as &$item) {
-            if (isset($item['price']) && is_string($item['price'])) {
-                $item['price'] = floatval($item['price']);
-            }
-
-            if (isset($item['facebook']) && is_string($item['facebook'])) {
-                $item['facebook'] = (int)$item['facebook'];
-            }
-            if (isset($item['is_kcup']) && is_string($item['is_kcup'])) {
-                $item['is_kcup'] = (int)$item['is_kcup'];
+        foreach ($data as $item) {
+            try {
+                $callback($item);
+            } catch (\Exception $e) {
+                ErrorLogger::logError("Error processing item: " . $e->getMessage());
             }
         }
-
-        return $data;
     }
 }

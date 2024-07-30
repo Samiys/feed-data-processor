@@ -36,16 +36,13 @@ try {
             });
             break;
         case 'json':
-            $items = JSONParser::parse($file);
-            if ($items) {
-                foreach ($items as $item) {
-                    try {
-                        $dataInserter->insertData((object)$item);
-                    } catch (\Exception $e) {
-                        ErrorLogger::logError("Error processing item: " . $e->getMessage());
-                    }
+            JSONParser::parse($file, function ($item) use ($dataInserter) {
+                try {
+                    $dataInserter->insertData($item);
+                } catch (\Exception $e) {
+                    ErrorLogger::logError("Error processing item: " . $e->getMessage());
                 }
-            }
+            });
             break;
         default:
             throw new Exception("Unsupported file type: $fileExtension");
