@@ -1,20 +1,10 @@
 <?php
-
 namespace App\Parser;
 
-use Exception;
 use XMLReader;
-use SimpleXMLElement;
 use App\Logger\ErrorLogger;
 
 class XMLStreamParser {
-    /**
-     * Parses an XML file using stream-based parsing and processes each item node using the provided callback function.
-     *
-     * @param string $xmlFile The path to the XML file.
-     * @param callable $callback The callback function to process each item node.
-     * @throws Exception
-     */
     public static function parse(string $xmlFile, callable $callback): void {
         if (!file_exists($xmlFile)) {
             ErrorLogger::logError("XML file not found: $xmlFile");
@@ -25,12 +15,22 @@ class XMLStreamParser {
         $reader->open($xmlFile);
 
         while ($reader->read()) {
-            if ($reader->nodeType === XMLReader::ELEMENT && $reader->name === 'item') {
-                $node = new SimpleXMLElement($reader->readOuterXML());
+            if ($reader->nodeType == XMLReader::ELEMENT && $reader->name == 'item') {
+                $outerXml = $reader->readOuterXML();
+                if (!$outerXml) {
+                    ErrorLogger::logError("Failed to read outer XML or outer XML is empty.");
+                    continue;
+                }
+
+                $node = simplexml_load_string($outerXml);
+                if ($node === false) {
+                    ErrorLogger::logError("Failed to parse XML node: " . htmlspecialchars($outerXml));
+                    continue;
+                }
                 $callback($node);
             }
         }
-
         $reader->close();
     }
 }
+?>
